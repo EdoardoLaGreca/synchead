@@ -112,6 +112,9 @@ function *get_funcions(FILE *fd) {
 				}
 			}
 			break;
+		default:
+			buffer[buffer_idx++] = c;
+			break;
 		}
 	}
 }
