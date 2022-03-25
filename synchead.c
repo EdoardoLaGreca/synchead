@@ -2,20 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* function parameter (list item) */
-typedef struct func_param_s {
-	char *type;
-	char *name;
-	func_param_s *next;
-} func_param;
-
-/* function */
-typedef struct {
-	char* name;
-	int params_n;
-	func_param *params;
-} function;
-
 int verbose_output = 0;
 char *name = NULL;
 
@@ -63,10 +49,14 @@ void printv(char *msg) {
 	}
 }
 
-/* read functions (except static ones) in file and return them as a list */
-function *get_funcions(FILE *fd) {
-	int buffer_idx = 0, buffer_len = 80;
-	char *buffer = calloc(buffer_len, sizeof(char));
+/* read functions (except for static ones) from file fd and return them in the
+   array of strings functions, together with the number of functions read
+*/
+int get_funcions(FILE *fd, char **functions) {
+	/* rewrite better
+	int func_c_idx = 0, func_p_idx = 0, func_c_len = 80, func_p_len = 1, func_n;
+	char *curr_func = calloc(func_c_len, sizeof(char));
+	functions = calloc(func_p_len, sizeof(char*));
 
 	if (!fd) {
 		return NULL;
@@ -76,10 +66,9 @@ function *get_funcions(FILE *fd) {
 		char c;
 		int i = 0;
 
-		if (buffer_idx > buffer_len) {
-			/* buffer has reached limit, expand */
+		if (func_p_len == func_n) {
 			buffer_len *= 2;
-			buffer = realloc(buffer, buffer_len);
+			functions = realloc(functions, buffer_len);
 		}
 
 		c = fgetc(fd);
@@ -87,17 +76,13 @@ function *get_funcions(FILE *fd) {
 		switch (c) {
 		case ' ':
 		case '\n':
-			/*TODO*/
 			continue;
 			break;
 		case '(':
-			/*TODO*/
 			break;
 		case ')':
-			/*TODO*/
 			break;
 		case '{':
-			/* skip to the corresponding '}' */
 			i = 1;
 			while (i != 0) {
 				c = fgetc(fd);
@@ -113,15 +98,18 @@ function *get_funcions(FILE *fd) {
 			}
 			break;
 		default:
-			buffer[buffer_idx++] = c;
+			functions[buffer_idx++] = c;
 			break;
 		}
 	}
+
+	*/
 }
 
 int main() {
 	FILE *sfd, *hfd;
-	char *source_name, *header_name;
+	char *source_name, *header_name, **func_array;
+	int i, func_n;
 
 	if (!parse_args) {
 		exit(EXIT_FAILURE);
@@ -142,7 +130,11 @@ int main() {
 		exit(EXIT_FAILURE);
 	}
 
+	func_n = get_funcions(sfd, func_array);
 
+	for (i = 0; i < func_n; i++) {
+		/* TODO */
+	}
 
 	return 0;
 }
