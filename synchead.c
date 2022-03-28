@@ -49,6 +49,51 @@ void printv(char *msg) {
 	}
 }
 
+/* skip to next occurrence of string in a file, do nothing if the string is
+   empty
+*/
+void skip_to_string(FILE *fd, char *str) {
+	int chunk_size, buffer_size;
+	char *buffer;
+
+	chunk_size = strlen(str);
+	buffer_size = chunk_size * 4;
+	buffer = calloc(buffer_size, sizeof(char));
+	if (!fd || !buffer) return;
+	fgets(buffer, buffer_size, fd);
+
+	while (strstr(buffer, str) == NULL) {
+		/* last chunk of buffer */
+		char *last_chunk;
+		last_chunk = malloc(chunk_size);
+		memcpy(last_chunk, buffer + buffer_size - chunk_size, chunk_size);
+
+		/* put new data in buffer, the new first chunk is the previous last
+		   chunk
+		*/
+		/*TODO*/
+	}
+}
+
+/* skip to matching curly brace */
+void skip_to_matching_cb(FILE *fd) {
+	char c = 0, other;
+	int i = 1;
+
+	while (i != 0) {
+		c = fgetc(fd);
+		if (c == '{') {
+			i++;
+			continue;
+		}
+
+		if (c == '}') {
+			i--;
+			continue;
+		}
+	}
+}
+
 /* read functions (except for static ones) from file fd and return them in the
    array of strings functions, together with the number of functions read
 */
@@ -90,9 +135,18 @@ int get_funcions(FILE *fd, char **functions) {
 		}
 
 		switch (c) {
+		case '*': /* comments */
+			if (prev_c == '/') {
+				skip_to_string(fd, "*/");
+			}
+			break;
+		case '#': /* preprocessor directives */
+			while (c != '\n') {
+
+			}
 		case ' ':
 		case '\t':
-		case '\n':
+		case '\n': /* whitespace */
 			/* remove extra spaces */
 			if (prev_c == ' ' || prev_c == '\t' || prev_c == '\n') {
 				continue;
@@ -100,7 +154,7 @@ int get_funcions(FILE *fd, char **functions) {
 				curr_func[func_c_idx++] = ' ';
 			}
 			break;
-		case '{':
+		case '{': /* function body */
 			int i = 1;
 
 			/* add new function */
@@ -114,18 +168,7 @@ int get_funcions(FILE *fd, char **functions) {
 			if (!curr_func) return -1;
 
 			/* skip to the matching '}' */
-			while (i != 0) {
-				c = fgetc(fd);
-				if (c == '{') {
-					i++;
-					continue;
-				}
-
-				if (c == '}') {
-					i--;
-					continue;
-				}
-			}
+			skip_to_matching_cb(fd);
 			break;
 		default:
 			curr_func[func_c_idx++] = c;
@@ -133,6 +176,8 @@ int get_funcions(FILE *fd, char **functions) {
 		}
 	}
 }
+
+
 
 int main() {
 	FILE *sfd, *hfd;
@@ -161,8 +206,10 @@ int main() {
 	func_n = get_funcions(sfd, func_array);
 
 	for (i = 0; i < func_n; i++) {
-		/* TODO */
+		func_array[i];
 	}
+
+	
 
 	return 0;
 }
