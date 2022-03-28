@@ -53,37 +53,67 @@ void printv(char *msg) {
    array of strings functions, together with the number of functions read
 */
 int get_funcions(FILE *fd, char **functions) {
-	/* rewrite better
-	int func_c_idx = 0, func_p_idx = 0, func_c_len = 80, func_p_len = 1, func_n;
-	char *curr_func = calloc(func_c_len, sizeof(char));
-	functions = calloc(func_p_len, sizeof(char*));
+	/* func_c_len = function length in characters
+	   func_n_len = number of functions
+	   func_c_idx = current index of function characters
+	   func_n_idx = current index of functions
+	*/
+	int func_c_len = 80, func_n_len = 1;
+	int func_c_idx = 0, func_n_idx = 0;
 
-	if (!fd) {
-		return NULL;
-	}
+	char *curr_func;
+
+	if (!fd) return -1;
+
+	curr_func = calloc(func_c_len, sizeof(char));
+	functions = calloc(func_n_len, sizeof(char*));
+
+	if (!curr_func || !functions) return -1;
 
 	while (1) {
-		char c;
-		int i = 0;
+		char c = 0, prev_c = 0;
 
-		if (func_p_len == func_n) {
-			buffer_len *= 2;
-			functions = realloc(functions, buffer_len);
+		if (func_c_idx == func_c_len) {
+			/* resize string */
+			func_c_len *= 1.5;
+			curr_func = realloc(curr_func, func_c_len);
+
+			if (!curr_func) return -1;
 		}
 
+		prev_c = c;
 		c = fgetc(fd);
+
+		if (prev_c == 0) {
+			/* first iteration of loop */
+			continue;
+		}
 
 		switch (c) {
 		case ' ':
+		case '\t':
 		case '\n':
-			continue;
-			break;
-		case '(':
-			break;
-		case ')':
+			/* remove extra spaces */
+			if (prev_c == ' ' || prev_c == '\t' || prev_c == '\n') {
+				continue;
+			} else {
+				curr_func[func_c_idx++] = ' ';
+			}
 			break;
 		case '{':
-			i = 1;
+			int i = 1;
+
+			/* add new function */
+			func_n_len++;
+			functions = realloc(functions, func_n_len);
+			if (!functions) return -1;
+			functions[func_n_idx++] = curr_func;
+
+			/* reset current function string */
+			curr_func = calloc(func_c_len, sizeof(char));
+			if (!curr_func) return -1;
+
+			/* skip to the matching '}' */
 			while (i != 0) {
 				c = fgetc(fd);
 				if (c == '{') {
@@ -98,12 +128,10 @@ int get_funcions(FILE *fd, char **functions) {
 			}
 			break;
 		default:
-			functions[buffer_idx++] = c;
+			curr_func[func_c_idx++] = c;
 			break;
 		}
 	}
-
-	*/
 }
 
 int main() {
