@@ -75,13 +75,26 @@ void skip_to_string(FILE *fd, char *str) {
 	}
 }
 
-/* skip to matching curly brace */
-void skip_to_matching_cb(FILE *fd) {
-	char c = 0, other;
+/* skip to matching curly brace
+   return value can be:
+    - = 0 if everything went well
+	- > 0 if one or more '{' are missing in the file
+	- < 0 if one or more '}' are missing in the file
+*/
+int skip_to_matching_cb(FILE *fd) {
+	char c = 0;
 	int i = 1;
+	fpos_t *currpos = NULL;
+
+	fgetpos(fd, currpos);
 
 	while (i != 0) {
 		c = fgetc(fd);
+
+		if (c == EOF) {
+			break;
+		}
+
 		if (c == '{') {
 			i++;
 			continue;
@@ -92,6 +105,10 @@ void skip_to_matching_cb(FILE *fd) {
 			continue;
 		}
 	}
+
+	fsetpos(fd, currpos);
+
+	return i;
 }
 
 /* read functions (except for static ones) from file fd and return them in the
@@ -155,8 +172,6 @@ int get_funcions(FILE *fd, char **functions) {
 			}
 			break;
 		case '{': /* function body */
-			int i = 1;
-
 			/* add new function */
 			func_n_len++;
 			functions = realloc(functions, func_n_len);
@@ -179,12 +194,12 @@ int get_funcions(FILE *fd, char **functions) {
 
 
 
-int main() {
+int main(int argc, char **argv) {
 	FILE *sfd, *hfd;
-	char *source_name, *header_name, **func_array;
+	char *source_name, *header_name, **func_array = NULL;
 	int i, func_n;
 
-	if (!parse_args) {
+	if (!parse_args(argc, argv)) {
 		exit(EXIT_FAILURE);
 	}
 
@@ -194,19 +209,21 @@ int main() {
 	}
 
 	source_name = calloc(strlen(name) + 3, sizeof(char));
-	
+	strcpy(source_name, name);
+	/*source_name[strlen(name) - 1] = ".h";*/
+
 	/* read the source file and get the functions */
 	sfd = fopen(source_name, "r");
 
 	if (!sfd) {
-		sprintf(stderr, "ERROR: file %s not found.", source_name);
+		fprintf(stderr, "ERROR: file %s not found.\n", source_name);
 		exit(EXIT_FAILURE);
 	}
 
 	func_n = get_funcions(sfd, func_array);
 
 	for (i = 0; i < func_n; i++) {
-		func_array[i];
+		printf("%s", func_array[i]); /*DEBUG*/
 	}
 
 	
