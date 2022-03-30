@@ -1,7 +1,7 @@
 # synchead
 Sync C source files with their headers
 
-This program is meant to synchronize the header file with its implementation. All the function declarations in the header file are overridden. The name must not include the file name ending (e.g. `asdasd.c` is not ok while `asdasd` is). The header file must have the same name but with ending with `.h`.
+This program is meant to synchronize the header file with its implementation. All the function declarations in the header file are overridden. The name must include the file name ending (e.g. `asdasd.c` is ok while `asdasd` is not). The header file must have the same name but with ending with `.h`.
 
 ## Usage
 
