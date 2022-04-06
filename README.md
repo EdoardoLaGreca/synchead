@@ -6,15 +6,11 @@ This program is meant to synchronize the header file with its implementation. Al
 ## Usage
 
 ```
-synchead [OPTIONS]... NAME
+synchead NAME
 ```
 
 Where:
- - NAME is the header file name
-
-## Options
-
- - `-v` - Verbose output. Prints which functions are being synced.
+ - `NAME` is the header file name
 
 ## License
 
