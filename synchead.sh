@@ -54,16 +54,16 @@ get_func_name() {
 }
 
 # check if a path was provided
-if [ -z $header_path ]
+if [ -z "$header_path" ]
 then
-	echo "ERROR: no file path provided." >&2
+	echo "ERROR: no header file path provided." >&2
 	exit 1
 fi
 
 # check if source file exists
-if [ ! -f $source_path ]
+if [ ! -f "$source_path" ]
 then
-	echo "ERROR: file does not exist or cannot be read." >&2
+	echo "ERROR: file $source_path does not exist or cannot be read." >&2
 	exit 1
 fi
 
@@ -71,7 +71,7 @@ fi
 source_functions=`grep -E $function_regex $source_path | sed "s/\n/ /g"`
 
 # check if source file has functions
-if [ -z $source_functions ]
+if [ -z "$source_functions" ]
 then
 	echo "no functions found in source file" >&2
 	exit 0
