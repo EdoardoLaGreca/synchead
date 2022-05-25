@@ -89,7 +89,10 @@ fi
 # get functions from header file and replace newlines with spaces
 header_functions=`get_funcs "$header_path"`
 
-echo $source_functions | while read curr_function
+IFS='
+'
+
+for func_sig in $source_functions
 do
 	# get function name
 	#TODO
