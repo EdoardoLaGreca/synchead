@@ -1,7 +1,7 @@
 #! /bin/sh
 
 header_path="$1"
-source_path=`echo $header_path | sed "s/.c/.h/"`
+source_path=`echo $header_path | sed "s/.h/.c/"`
 
 ## DO NOT TOUCH ##
 function_regex="^\s*((struct|enum)\s+)?([A-z_][A-z0-9_]+)\**\s*\**([A-z_][A-z0-9_]+)\s*\(\s*(\s*((struct|enum)\s+)?([A-z_][A-z0-9_]+)\**\s\**([A-z_][A-z0-9_]+)\s*,?)*\s*\)"
