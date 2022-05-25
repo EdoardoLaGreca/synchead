@@ -4,8 +4,8 @@ header_path="$1"
 source_path=`echo $header_path | sed "s/.h/.c/"`
 
 ## DO NOT TOUCH ##
-function_regex="^\s*((struct|enum)\s+)?([A-z_][A-z0-9_]+)\**\s*\**([A-z_][A-z0-9_]+)\s*\(\s*(\s*((struct|enum)\s+)?([A-z_][A-z0-9_]+)\**\s\**([A-z_][A-z0-9_]+)\s*,?)*\s*\)"
-function_name_regex="^\s*((struct|enum)\s+)?([A-z_][A-z0-9_]+)\**\s*\**func_name\s*\(\s*(\s*((struct|enum)\s+)?([A-z_][A-z0-9_]+)\**\s\**([A-z_][A-z0-9_]+)\s*,?)*\s*\)"
+function_regex="((struct|enum)\s+)?([A-z_][A-z0-9_]+)\**\s*\**([A-z_][A-z0-9_]+)\s*\(\s*(\s*((struct|enum)\s+)?([A-z_][A-z0-9_]+)\**\s\**([A-z_][A-z0-9_]+)\s*,?)*\s*\)"
+#function_name_regex="^\s*((struct|enum)\s+)?([A-z_][A-z0-9_]+)\**\s*\**func_name\s*\(\s*(\s*((struct|enum)\s+)?([A-z_][A-z0-9_]+)\**\s\**([A-z_][A-z0-9_]+)\s*,?)*\s*\)"
 ##################
 
 # check if a path was provided
