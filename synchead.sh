@@ -8,6 +8,51 @@ function_regex="((struct|enum)\s+)?([A-z_][A-z0-9_]+)\**\s*\**([A-z_][A-z0-9_]+)
 #function_name_regex="^\s*((struct|enum)\s+)?([A-z_][A-z0-9_]+)\**\s*\**func_name\s*\(\s*(\s*((struct|enum)\s+)?([A-z_][A-z0-9_]+)\**\s\**([A-z_][A-z0-9_]+)\s*,?)*\s*\)"
 ##################
 
+# get function signatures from file
+get_funcs() {
+	path="$1"
+
+	tr '\n' ' ' <$path | grep -oE "$function_regex" | sed "s/) /)\
+/g"
+}
+
+# extract function name from function signature
+get_func_name() {
+	sig="$1"
+
+	if [ -z sig ]
+	then
+		return
+	fi
+
+	IFS=' '
+	prev_was_keyword=1
+	for token in $sig
+	do
+		case "$token" in
+			"static")
+				prev_was_keyword=1
+				;;
+			"struct"|"enum")
+				prev_was_keyword=1
+				;;
+			*) # this can either be a type or the function's name
+				if [ $prev_was_keyword -eq 0 ]
+				then
+					# this is the function's name since the type is not a keyword
+					func_name=$token
+					break
+				else
+					# this is the function's type
+					prev_was_keyword=0
+				fi
+				;;
+		esac
+	done
+
+	echo $func_name | sed "s/(.*$//g"
+}
+
 # check if a path was provided
 if [ -z $header_path ]
 then
