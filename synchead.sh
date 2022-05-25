@@ -94,6 +94,26 @@ IFS='
 
 for func_sig in $source_functions
 do
-	# get function name
-	#TODO
+	# get source function names
+	func_name=`get_func_name "$func_sig"`
+
+	# get matching function signature from header file
+	header_func_sig=`echo "$header_functions" | grep "$func_name"`
+
+	# check if function is already in header file (header_func_sig is not empty)
+	if [ "$header_func_sig" ]
+	then
+		# compare function signatures
+		if [ "$header_func_sig" != "$func_sig" ]
+		then
+			echo "$func_name: signatures do not match, replacing..." >&2
+
+			# replace function signature in header file
+			sed -i "s/$header_func_sig/$func_sig/" $header_path
+		fi
+	else
+		# function is not in header file, append it
+		echo "$func_name: not found in header file, appending..." >&2
+		echo "$func_sig;" >>$header_path
+	fi
 done
