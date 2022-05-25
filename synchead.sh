@@ -68,7 +68,7 @@ then
 fi
 
 # get functions from source file and replace newlines with spaces
-source_functions=`grep -E $function_regex $source_path | sed "s/\n/ /g"`
+source_functions=`get_funcs "$source_path"`
 
 # check if source file has functions
 if [ -z "$source_functions" ]
@@ -87,7 +87,7 @@ then
 fi
 
 # get functions from header file and replace newlines with spaces
-header_functions=`grep -E $function_regex $header_path | sed "s/\n/ /g"`
+header_functions=`get_funcs "$header_path"`
 
 echo $source_functions | while read curr_function
 do
