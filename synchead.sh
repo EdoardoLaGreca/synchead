@@ -109,7 +109,7 @@ do
 	func_name=`get_func_name "$func_sig"`
 
 	# get matching function signature from header file
-	header_func_sig=`echo "$header_functions" | grep "$func_name"`
+	header_func_sig=`echo "$header_functions" | grep -E " $func_name[^A-z0-9_]" | head -n 1`
 
 	# check if function is already in header file (header_func_sig is not empty)
 	if [ "$header_func_sig" ]
