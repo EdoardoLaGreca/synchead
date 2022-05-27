@@ -16,6 +16,17 @@ get_funcs() {
 /g"
 }
 
+replace_signature() {
+	old_signature="$1"
+	new_signature="$2"
+	path="$3"
+
+	line=`grep -nF "$old_signature" "$path" | cut -d : -f 1`
+
+	# replace the entire line
+	sed -i "${line}s/.*/$new_signature;/" $path
+}
+
 # extract function name from function signature
 get_func_name() {
 	sig="$1"
@@ -109,7 +120,7 @@ do
 			echo "$func_name: signatures do not match, replacing..." >&2
 
 			# replace function signature in header file
-			sed -i "s/$header_func_sig/$func_sig/" $header_path
+			replace_signature "$header_func_sig" "$func_sig" "$header_path"
 		fi
 	else
 		# function is not in header file, append it
